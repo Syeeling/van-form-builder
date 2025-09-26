@@ -1,7 +1,7 @@
 <template>
-  <van-time-picker
+  <component
     v-model="pickerValue"
-    v-bind="$attrs.props"
+    :is="_resolveComponent($attrs.props)"
     :columnsType
     @cancel="_cancelSelect"
     @confirm="_confirmSelect"
@@ -9,12 +9,14 @@
 </template>
 
 <script setup name="STimePicker">
+const _resolveComponent = props => h(VanTimePicker, props, props.slots)
+
 const { textFormatter, initTime } = defineProps({
   // 定义用于页面显示的日期格式
   textFormatter: {
     type: Function
   },
-  // 定义 TimePicker 初始选中的时间
+  // 定义 VanTimePicker 初始选中的时间
   initTime: {
     type: String,
     default: '00:00:00'
@@ -34,12 +36,16 @@ const pickerValue = ref([])
 // 值对应的文本，用于页面显示
 const fieldText = computed(() => {
   if (!fieldValue.value) return ''
-  const date = new Date('0001/01/01 ' + fieldValue.value)
   const mapping = {
-    hour: String(date.getHours()).padStart(2, '0'),
-    minute: String(date.getMinutes()).padStart(2, '0'),
-    second: String(date.getSeconds()).padStart(2, '0')
+    hour: '00',
+    minute: '00',
+    second: '00'
   }
+  // fieldValue是已经按照时、分、秒排序的，所以需要将columnsType也按照时、分、秒的顺序排序，才能使mapping的值映射正确
+  const _columnsTypeSorted = ['hour', 'minute', 'second'].filter(i => columnsType.includes(i))
+  _columnsTypeSorted.forEach((item, index) => {
+    mapping[item] = fieldValue.value.split(':')[index]
+  })
   const formatter = textFormatter || _defaultFormatter
   return formatter(mapping)
 })
@@ -86,9 +92,17 @@ function _confirmSelect() {
 
 // 初始化Picker绑定的值
 function _initPickerValue() {
-  const [hour, minute, second] = fieldValue.value ? fieldValue.value.split(':') : initTime.split(':')
-  const initPickerTimeMap = { hour, minute, second }
-  pickerValue.value = columnsType.map(item => initPickerTimeMap[item])
+  const mapping = {
+    hour: '00',
+    minute: '00',
+    second: '00'
+  }
+  const _columnsTypeSorted = ['hour', 'minute', 'second'].filter(i => columnsType.includes(i))
+  const _initValue = fieldValue.value ? fieldValue.value.split(':') : initTime.split(':')
+  _columnsTypeSorted.forEach((item, index) => {
+    mapping[item] = _initValue[index]
+  })
+  pickerValue.value = columnsType.map(item => mapping[item])
 }
 
 defineExpose({

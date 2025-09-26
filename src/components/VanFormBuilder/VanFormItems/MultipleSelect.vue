@@ -10,7 +10,7 @@
   </van-popup>
 </template>
 
-<script setup name="SyMultipleSelect">
+<script setup name="MultipleSelect">
 import VanMultiplePicker from '../ExtComps/VanMultiplePicker/VanMultiplePicker.vue'
 
 const { popupProps, separator } = defineProps({
@@ -34,7 +34,7 @@ const pickerValue = ref([])
 // 值对应的文本，用于页面显示
 const fieldText = computed(() => {
   return attrs.props.options
-    ?.filter(op => fieldValue.value.includes(op.value))
+    ?.filter(op => fieldValue.value?.includes(op.value))
     .map(i => i.text)
     .join(separator)
 })
@@ -57,8 +57,12 @@ function _confirmSelect() {
 
 // 初始化Picker绑定的值
 function _initPickerValue() {
-  pickerValue.value = attrs.props.options.filter(op => fieldValue.value.includes(op.value)).map(i => i.value)
+  pickerValue.value = attrs.props.options?.filter(op => fieldValue.value?.includes(op.value)).map(i => i.value)
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep() .van-checkbox__icon--round {
+  --van-checkbox-size: 36px;
+}
+</style>

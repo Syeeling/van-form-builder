@@ -16,7 +16,7 @@
   </van-popup>
 </template>
 
-<script setup name="SyTimePicker">
+<script setup name="TimePicker">
 import STimePicker from '../Pickers/STimePicker.vue'
 
 const { popupProps } = defineProps({

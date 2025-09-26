@@ -1,6 +1,6 @@
 <template>
   <van-cell-group v-if="formItem.formType === 'cellGroup' && !formItem.hidden" v-bind="formItem.props">
-    <sy-form-item
+    <van-form-item
       v-for="item in formItem.formItems"
       :key="item.name"
       :form-item="item"
@@ -11,14 +11,14 @@
   </van-cell-group>
   <component
     v-else-if="!formItem.hidden"
-    :is="formItemTypes[formItem.formType]"
+    :is="currentFormItem"
     v-model="formData[formItem.name]"
     v-bind="{ props: {}, ...defaultFieldProps, ...fieldProps, ...formItem }"
     :popupProps="{ ...defaultPopupProps, ...popupProps, ...formItem.popupProps }"
   />
 </template>
 
-<script setup name="SyFormItem">
+<script setup name="VanFormItem">
 import formItemTypes from './formItemTypes.js'
 
 const { formItem, formData, fieldProps, popupProps } = defineProps({
@@ -39,6 +39,8 @@ const { formItem, formData, fieldProps, popupProps } = defineProps({
     default: () => ({})
   }
 })
+
+const currentFormItem = computed(() => defineAsyncComponent(formItemTypes[formItem.formType]))
 
 // van-field 默认属性
 const defaultFieldProps = {

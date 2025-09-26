@@ -6,7 +6,7 @@
     :lazy-render="false"
     @open.once="pickerRef.initPickerValue()"
   >
-    <s-date-picker
+    <s-picker
       ref="picker"
       v-model="fieldValue"
       v-bind="$attrs"
@@ -16,8 +16,8 @@
   </van-popup>
 </template>
 
-<script setup name="SyDatePicker">
-import SDatePicker from '../Pickers/SDatePicker.vue'
+<script setup name="Select">
+import SPicker from '../Pickers/SPicker.vue'
 
 const { popupProps } = defineProps({
   popupProps: Object

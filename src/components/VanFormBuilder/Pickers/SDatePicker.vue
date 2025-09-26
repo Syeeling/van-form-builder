@@ -1,7 +1,7 @@
 <template>
-  <van-date-picker
+  <component
     v-model="pickerValue"
-    v-bind="$attrs.props"
+    :is="_resolveComponent($attrs.props)"
     :columnsType
     @cancel="_cancelSelect"
     @confirm="_confirmSelect"
@@ -9,12 +9,14 @@
 </template>
 
 <script setup name="SDatePicker">
+const _resolveComponent = props => h(VanDatePicker, props, props.slots)
+
 const { textFormatter, initDate } = defineProps({
   // 定义用于页面显示的日期格式
   textFormatter: {
     type: Function
   },
-  // 定义 DatePicker 初始选中的日期
+  // 定义 VanDatePicker 初始选中的日期
   initDate: {
     type: [Date, String],
     default: new Date()

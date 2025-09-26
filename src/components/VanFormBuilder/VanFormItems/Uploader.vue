@@ -1,13 +1,15 @@
 <template>
   <van-field v-bind="$attrs">
     <template #input>
-      <van-slider v-model="fieldValue" v-bind="$attrs.props" />
+      <component v-model="fieldValue" :is="_resolveComponent($attrs.props)" />
     </template>
   </van-field>
 </template>
 
-<script setup name="SySlider">
+<script setup name="Uploader">
 const fieldValue = defineModel() // formData表单值
+
+const _resolveComponent = props => h(VanUploader, props, props.slots)
 </script>
 
 <style lang="scss" scoped></style>

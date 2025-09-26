@@ -1,13 +1,15 @@
 <template>
   <van-field v-bind="$attrs">
     <template #input>
-      <van-rate v-model="fieldValue" v-bind="$attrs.props" />
+      <component v-model="fieldValue" :is="_resolveComponent($attrs.props)" />
     </template>
   </van-field>
 </template>
 
-<script setup name="SyRate">
+<script setup name="Slider">
 const fieldValue = defineModel() // formData表单值
+
+const _resolveComponent = props => h(VanSlider, props, props.slots)
 </script>
 
 <style lang="scss" scoped></style>

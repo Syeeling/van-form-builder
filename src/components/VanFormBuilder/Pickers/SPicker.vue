@@ -1,7 +1,7 @@
 <template>
-  <van-picker
+  <component
     v-model="pickerValue"
-    v-bind="$attrs.props"
+    :is="_resolveComponent($attrs.props)"
     :columnsFieldNames
     @cancel="_cancelSelect"
     @confirm="_confirmSelect"
@@ -9,6 +9,8 @@
 </template>
 
 <script setup name="SPicker">
+const _resolveComponent = props => h(VanPicker, props, props.slots)
+
 const { showFullPath, pathSeparator } = defineProps({
   // 级联模式下，是否显示完整路径  true: 显示完整路径  false: 只显示值对应当前级别的文本
   showFullPath: {

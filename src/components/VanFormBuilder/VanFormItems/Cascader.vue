@@ -1,9 +1,9 @@
 <template>
   <van-field :model-value="fieldText" is-link readonly v-bind="$attrs" @click="showPicker = true" />
   <van-popup v-model:show="showPicker" v-bind="popupProps">
-    <van-cascader
+    <component
       v-model="fieldValue"
-      v-bind="$attrs.props"
+      :is="_resolveComponent($attrs.props)"
       :fieldNames
       @close="_handleClose"
       @finish="_handleFinish"
@@ -11,7 +11,9 @@
   </van-popup>
 </template>
 
-<script setup name="SyCascader">
+<script setup name="Cascader">
+const _resolveComponent = props => h(VanCascader, props, props.slots)
+
 const { popupProps, showFullPath, pathSeparator } = defineProps({
   popupProps: Object,
   // 是否显示完整路径  true: 显示完整路径  false: 只显示值对应当前级别的文本
