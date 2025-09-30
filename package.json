@@ -1,6 +1,6 @@
 {
   "name": "van-form-builder",
-  "version": "0.5.7",
+  "version": "1.0.0",
   "description": "A form builder based on Vue3 and Vant4",
   "author": "syeeling",
   "private": true,
