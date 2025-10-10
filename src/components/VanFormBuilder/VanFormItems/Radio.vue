@@ -1,6 +1,6 @@
 <template>
-  <van-field v-bind="$attrs">
-    <template #input>
+  <van-field v-bind="$attrs" :model-value="fieldText">
+    <template #input v-if="!$attrs.readonly">
       <van-radio-group v-model="fieldValue" v-bind="$attrs.props">
         <template v-for="item in $attrs.props.options" :key="item.value">
           <component :is="_resolveComponent(item)" :name="item.value" :class="item.shape || $attrs.props.shape" />
@@ -11,7 +11,13 @@
 </template>
 
 <script setup name="Radio">
+const attrs = useAttrs()
+
 const fieldValue = defineModel() // formData表单值
+
+const fieldText = computed(() => {
+  return attrs.props.options?.find(op => op.value === fieldValue.value)?.text || ''
+})
 
 const _resolveComponent = item =>
   h(VanRadio, item, { ...item.slots, default: item.slots?.default || (() => item.text) })

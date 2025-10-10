@@ -1,6 +1,6 @@
 <template>
-  <van-field v-bind="$attrs">
-    <template #input>
+  <van-field v-bind="$attrs" :model-value="fieldValue">
+    <template #input v-if="!$attrs.readonly">
       <component v-model="fieldValue" :is="_resolveComponent($attrs.props)" />
     </template>
   </van-field>

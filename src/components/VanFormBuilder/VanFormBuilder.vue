@@ -1,6 +1,14 @@
 <template>
   <van-form ref="formRef" class="van-form-builder" v-bind="{ ...defaultFormProps, ...formProps, ...$attrs }">
-    <van-form-item v-for="item in formItems" :key="item.name" :form-item="item" :formData :fieldProps :popupProps />
+    <van-form-item
+      v-for="item in formItems"
+      :key="item.name"
+      :form-item="item"
+      :formData
+      :fieldProps
+      :popupProps
+      :class="{ readonly: item.readonly ?? fieldProps.readonly }"
+    />
   </van-form>
 </template>
 
@@ -42,7 +50,13 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
+.van-form-builder {
+  --readonly-opacity: 0.7;
+}
 :deep() .van-field__label {
   flex: none;
+}
+:deep() .van-field.readonly .van-field__control {
+  color: var(--van-text-color-2);
 }
 </style>

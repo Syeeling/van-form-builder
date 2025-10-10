@@ -7,9 +7,12 @@
 </template>
 
 <script setup name="Uploader">
+const attrs = useAttrs()
+
 const fieldValue = defineModel() // formData表单值
 
-const _resolveComponent = props => h(VanUploader, props, props.slots)
+const _resolveComponent = props =>
+  h(VanUploader, { ...props, deletable: !attrs.readonly, showUpload: !attrs.readonly }, props.slots)
 </script>
 
 <style lang="scss" scoped></style>

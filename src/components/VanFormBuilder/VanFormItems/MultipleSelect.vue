@@ -1,5 +1,12 @@
 <template>
-  <van-field :model-value="fieldText" is-link readonly v-bind="$attrs" @click="showPicker = true" />
+  <van-field
+    :model-value="fieldText"
+    :is-link="!$attrs.readonly"
+    v-bind="$attrs"
+    :clickable="!$attrs.readonly"
+    readonly
+    @click="!$attrs.readonly && (showPicker = true)"
+  />
   <van-popup v-model:show="showPicker" v-bind="popupProps" @open.once="_initPickerValue">
     <van-multiple-picker
       v-model="pickerValue"

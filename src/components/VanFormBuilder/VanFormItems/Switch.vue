@@ -1,7 +1,11 @@
 <template>
   <van-field v-bind="$attrs">
     <template #input>
-      <component v-model="fieldValue" :is="_resolveComponent($attrs.props)" />
+      <component
+        v-model="fieldValue"
+        :is="_resolveComponent($attrs.props)"
+        :disabled="$attrs.readonly ?? $attrs.props.disabled"
+      />
     </template>
   </van-field>
 </template>
@@ -15,5 +19,6 @@ const _resolveComponent = props => h(VanSwitch, props, props.slots)
 <style lang="scss" scoped>
 .van-switch {
   --van-switch-size: 40px;
+  --van-switch-disabled-opacity: var(--readonly-opacity);
 }
 </style>
