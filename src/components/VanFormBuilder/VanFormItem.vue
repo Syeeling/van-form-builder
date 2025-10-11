@@ -11,7 +11,7 @@
   </van-cell-group>
   <component
     v-else-if="!formItem.hidden"
-    :is="currentFormItem"
+    :is="formItemTypes[formItem.formType]"
     v-model="formData[formItem.name]"
     v-bind="{ props: {}, ...defaultFieldProps, ...fieldProps, ...formItem }"
     :popupProps="{ ...defaultPopupProps, ...popupProps, ...formItem.popupProps }"
@@ -39,8 +39,6 @@ const { formItem, formData, fieldProps, popupProps } = defineProps({
     default: () => ({})
   }
 })
-
-const currentFormItem = computed(() => defineAsyncComponent(formItemTypes[formItem.formType]))
 
 // van-field 默认属性
 const defaultFieldProps = {
