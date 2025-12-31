@@ -13,5 +13,6 @@ export default {
   timePicker: defineAsyncComponent(() => import('./VanFormItems/TimePicker.vue')),
   pickerGroup: defineAsyncComponent(() => import('./VanFormItems/PickerGroup.vue')),
   multipleSelect: defineAsyncComponent(() => import('./VanFormItems/MultipleSelect.vue')),
+  advancedSelect: defineAsyncComponent(() => import('./VanFormItems/AdvancedSelect.vue')),
   customize: defineAsyncComponent(() => import('./VanFormItems/Customize.vue'))
 }
