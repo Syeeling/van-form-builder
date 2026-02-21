@@ -1,12 +1,5 @@
 <template>
-  <van-field
-    :model-value="fieldText"
-    :is-link="!$attrs.readonly"
-    v-bind="$attrs"
-    :clickable="!$attrs.readonly"
-    readonly
-    @click="!$attrs.readonly && (showPicker = true)"
-  />
+  <component :is="_renderField()" />
   <van-popup
     v-model:show="showPicker"
     v-bind="popupProps"
@@ -16,7 +9,7 @@
     <s-date-picker
       ref="picker"
       v-model="fieldValue"
-      v-bind="$attrs"
+      v-bind="attrs"
       @cancel="showPicker = false"
       @confirm="showPicker = false"
     />
@@ -30,6 +23,7 @@ const { popupProps } = defineProps({
   popupProps: Object
 })
 
+const attrs = useAttrs()
 const pickerRef = useTemplateRef('picker')
 
 // formData表单值
@@ -38,6 +32,20 @@ const showPicker = ref(false)
 
 // 值对应的文本，用于页面显示
 const fieldText = computed(() => pickerRef.value?.fieldText || '')
+
+const _renderField = () =>
+  h(
+    VanField,
+    {
+      isLink: !attrs.readonly,
+      ...attrs,
+      clickable: !attrs.readonly,
+      readonly: true,
+      modelValue: fieldText.value,
+      onClick: () => !attrs.readonly && (showPicker.value = true)
+    },
+    attrs.slots
+  )
 </script>
 
 <style lang="scss" scoped></style>

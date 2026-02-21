@@ -1,7 +1,7 @@
 <template>
   <component
+    :is="_renderTimePicker()"
     v-model="pickerValue"
-    :is="_resolveComponent($attrs.props)"
     :columnsType
     @cancel="_cancelSelect"
     @confirm="_confirmSelect"
@@ -9,8 +9,6 @@
 </template>
 
 <script setup name="STimePicker">
-const _resolveComponent = props => h(VanTimePicker, props, props.slots)
-
 const { textFormatter, initTime } = defineProps({
   // 定义用于页面显示的日期格式
   textFormatter: {
@@ -23,12 +21,15 @@ const { textFormatter, initTime } = defineProps({
   }
 })
 
-const fieldValue = defineModel() // formData表单值
+// formData表单值
+const fieldValue = defineModel()
 
 const emit = defineEmits(['cancel', 'confirm'])
 
 const attrs = useAttrs()
 const columnsType = attrs.props.columnsType || ['hour', 'minute', 'second']
+
+const _renderTimePicker = () => h(VanTimePicker, attrs.props, attrs.props.slots)
 
 // TimePicker绑定的时间
 const pickerValue = ref([])

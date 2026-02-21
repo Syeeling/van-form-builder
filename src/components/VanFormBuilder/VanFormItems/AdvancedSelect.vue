@@ -1,17 +1,10 @@
 <template>
-  <van-field
-    :model-value="fieldText"
-    :is-link="!$attrs.readonly"
-    v-bind="$attrs"
-    :clickable="!$attrs.readonly"
-    readonly
-    @click="!$attrs.readonly && (showPicker = true)"
-  />
+  <component :is="_renderField()" />
   <van-popup v-model:show="showPicker" v-bind="popupProps" :lazy-render="false" @open.once="_initPickerValue">
     <component
+      :is="_renderAdvancedPicker()"
       ref="advancedPickerRef"
       v-model="pickerValue"
-      :is="_resolveComponent($attrs.props)"
       @cancel="_cancelSelect"
       @confirm="_confirmSelect"
     />
@@ -20,8 +13,6 @@
 
 <script setup name="AdvancedSelect">
 import VanAdvancedPicker from '../ExtComps/VanAdvancedPicker/VanAdvancedPicker.vue'
-
-const _resolveComponent = props => h(VanAdvancedPicker, props, props.slots)
 
 const { popupProps, separator } = defineProps({
   popupProps: Object,
@@ -33,7 +24,6 @@ const { popupProps, separator } = defineProps({
 })
 
 const attrs = useAttrs()
-
 const advancedPickerRef = useTemplateRef('advancedPickerRef')
 
 // formData表单值
@@ -52,6 +42,22 @@ const fieldText = computed(() => {
     .map(i => i.title)
     .join(separator)
 })
+
+const _renderField = () =>
+  h(
+    VanField,
+    {
+      isLink: !attrs.readonly,
+      ...attrs,
+      clickable: !attrs.readonly,
+      readonly: true,
+      modelValue: fieldText.value,
+      onClick: () => !attrs.readonly && (showPicker.value = true)
+    },
+    attrs.slots
+  )
+
+const _renderAdvancedPicker = () => h(VanAdvancedPicker, attrs.props, attrs.props.slots)
 
 // Picker选择器取消事件
 function _cancelSelect() {

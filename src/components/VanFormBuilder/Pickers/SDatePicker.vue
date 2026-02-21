@@ -1,7 +1,7 @@
 <template>
   <component
+    :is="_renderDatePicker()"
     v-model="pickerValue"
-    :is="_resolveComponent($attrs.props)"
     :columnsType
     @cancel="_cancelSelect"
     @confirm="_confirmSelect"
@@ -9,8 +9,6 @@
 </template>
 
 <script setup name="SDatePicker">
-const _resolveComponent = props => h(VanDatePicker, props, props.slots)
-
 const { textFormatter, initDate } = defineProps({
   // 定义用于页面显示的日期格式
   textFormatter: {
@@ -23,12 +21,15 @@ const { textFormatter, initDate } = defineProps({
   }
 })
 
-const fieldValue = defineModel() // formData表单值
+// formData表单值
+const fieldValue = defineModel()
 
 const emit = defineEmits(['cancel', 'confirm'])
 
 const attrs = useAttrs()
 const columnsType = attrs.props.columnsType || ['year', 'month', 'day']
+
+const _renderDatePicker = () => h(VanDatePicker, attrs.props, attrs.props.slots)
 
 // DatePicker绑定的日期
 const pickerValue = ref([])

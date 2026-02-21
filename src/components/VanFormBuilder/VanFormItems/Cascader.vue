@@ -1,26 +1,11 @@
 <template>
-  <van-field
-    :model-value="fieldText"
-    :is-link="!$attrs.readonly"
-    v-bind="$attrs"
-    :clickable="!$attrs.readonly"
-    readonly
-    @click="!$attrs.readonly && (showPicker = true)"
-  />
+  <component :is="_renderField()" />
   <van-popup v-model:show="showPicker" v-bind="popupProps">
-    <component
-      v-model="fieldValue"
-      :is="_resolveComponent($attrs.props)"
-      :fieldNames
-      @close="_handleClose"
-      @finish="_handleFinish"
-    />
+    <component :is="_renderCascader()" v-model="fieldValue" :fieldNames @close="_handleClose" @finish="_handleFinish" />
   </van-popup>
 </template>
 
 <script setup name="Cascader">
-const _resolveComponent = props => h(VanCascader, props, props.slots)
-
 const { popupProps, showFullPath, pathSeparator } = defineProps({
   popupProps: Object,
   // 是否显示完整路径  true: 显示完整路径  false: 只显示值对应当前级别的文本
@@ -40,6 +25,22 @@ const fieldNames = attrs.props.fieldNames || { text: 'text', value: 'value', chi
 
 const fieldValue = defineModel() // formData表单值
 const showPicker = ref(false)
+
+const _renderField = () =>
+  h(
+    VanField,
+    {
+      isLink: !attrs.readonly,
+      ...attrs,
+      clickable: !attrs.readonly,
+      readonly: true,
+      modelValue: fieldText.value,
+      onClick: () => !attrs.readonly && (showPicker.value = true)
+    },
+    attrs.slots
+  )
+
+const _renderCascader = () => h(VanCascader, attrs.props, attrs.props.slots)
 
 // 值对应的文本路径映射表
 const valueTextPathMap = computed(() => {

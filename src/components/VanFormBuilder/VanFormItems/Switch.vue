@@ -1,19 +1,26 @@
 <template>
-  <van-field v-bind="$attrs">
-    <template #input>
-      <component
-        v-model="fieldValue"
-        :is="_resolveComponent($attrs.props)"
-        :disabled="$attrs.readonly ?? $attrs.props.disabled"
-      />
-    </template>
-  </van-field>
+  <component :is="_renderField()" />
 </template>
 
 <script setup name="Switch">
-const fieldValue = defineModel() // formData表单值
+const attrs = useAttrs()
 
-const _resolveComponent = props => h(VanSwitch, props, props.slots)
+// formData表单值
+const fieldValue = defineModel()
+
+const _renderField = () => h(VanField, attrs, { ...attrs.slots, input: () => _renderSwitch() })
+
+const _renderSwitch = () =>
+  h(
+    VanSwitch,
+    {
+      ...attrs.props,
+      disabled: attrs.readonly ?? attrs.props.disabled,
+      modelValue: fieldValue.value,
+      'onUpdate:modelValue': val => (fieldValue.value = val)
+    },
+    attrs.props.slots
+  )
 </script>
 
 <style lang="scss" scoped>

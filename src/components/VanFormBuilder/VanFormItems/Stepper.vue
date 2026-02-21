@@ -1,15 +1,26 @@
 <template>
-  <van-field v-bind="$attrs" :model-value="fieldValue">
-    <template #input v-if="!$attrs.readonly">
-      <component v-model="fieldValue" :is="_resolveComponent($attrs.props)" />
-    </template>
-  </van-field>
+  <component :is="_renderField()" />
 </template>
 
 <script setup name="Stepper">
-const fieldValue = defineModel() // formData表单值
+const attrs = useAttrs()
 
-const _resolveComponent = props => h(VanStepper, props, props.slots)
+// formData表单值
+const fieldValue = defineModel()
+
+const _renderField = () =>
+  h(
+    VanField,
+    { ...attrs, modelValue: fieldValue.value },
+    { ...attrs.slots, input: attrs.readonly ? undefined : () => _renderStepper() }
+  )
+
+const _renderStepper = () =>
+  h(
+    VanStepper,
+    { ...attrs.props, modelValue: fieldValue.value, 'onUpdate:modelValue': val => (fieldValue.value = val) },
+    attrs.props.slots
+  )
 </script>
 
 <style lang="scss" scoped>

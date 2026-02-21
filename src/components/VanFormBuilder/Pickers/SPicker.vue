@@ -1,7 +1,7 @@
 <template>
   <component
+    :is="_renderPicker()"
     v-model="pickerValue"
-    :is="_resolveComponent($attrs.props)"
     :columnsFieldNames
     @cancel="_cancelSelect"
     @confirm="_confirmSelect"
@@ -9,8 +9,6 @@
 </template>
 
 <script setup name="SPicker">
-const _resolveComponent = props => h(VanPicker, props, props.slots)
-
 const { showFullPath, pathSeparator } = defineProps({
   // 级联模式下，是否显示完整路径  true: 显示完整路径  false: 只显示值对应当前级别的文本
   showFullPath: {
@@ -24,12 +22,15 @@ const { showFullPath, pathSeparator } = defineProps({
   }
 })
 
-const fieldValue = defineModel() // formData表单值
+// formData表单值
+const fieldValue = defineModel()
 
 const emit = defineEmits(['cancel', 'confirm'])
 
 const attrs = useAttrs()
 const columnsFieldNames = attrs.props.columnsFieldNames || { text: 'text', value: 'value', children: 'children' }
+
+const _renderPicker = () => h(VanPicker, attrs.props, attrs.props.slots)
 
 // Picker绑定的值
 const pickerValue = ref([])

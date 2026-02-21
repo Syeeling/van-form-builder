@@ -1,19 +1,7 @@
 <template>
-  <van-field
-    :model-value="fieldText"
-    :is-link="!$attrs.readonly"
-    v-bind="$attrs"
-    :clickable="!$attrs.readonly"
-    readonly
-    @click="!$attrs.readonly && (showPicker = true)"
-  />
+  <component :is="_renderField()" />
   <van-popup v-model:show="showPicker" v-bind="popupProps" @open.once="_initPickerValue">
-    <van-multiple-picker
-      v-model="pickerValue"
-      v-bind="$attrs.props"
-      @cancel="_cancelSelect"
-      @confirm="_confirmSelect"
-    />
+    <component :is="_renderMultiplePicker()" v-model="pickerValue" @cancel="_cancelSelect" @confirm="_confirmSelect" />
   </van-popup>
 </template>
 
@@ -45,6 +33,22 @@ const fieldText = computed(() => {
     .map(i => i.text)
     .join(separator)
 })
+
+const _renderField = () =>
+  h(
+    VanField,
+    {
+      isLink: !attrs.readonly,
+      ...attrs,
+      clickable: !attrs.readonly,
+      readonly: true,
+      modelValue: fieldText.value,
+      onClick: () => !attrs.readonly && (showPicker.value = true)
+    },
+    attrs.slots
+  )
+
+const _renderMultiplePicker = () => h(VanMultiplePicker, attrs.props, attrs.props.slots)
 
 // Picker选择器取消事件
 function _cancelSelect() {

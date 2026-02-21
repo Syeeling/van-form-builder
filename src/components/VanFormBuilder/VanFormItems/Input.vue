@@ -1,11 +1,14 @@
 <template>
-  <component v-model="fieldValue" :is="_resolveComponent($attrs)" />
+  <component :is="_renderField()" v-model="fieldValue" />
 </template>
 
 <script setup name="Input">
-const fieldValue = defineModel() // formData表单值
+const attrs = useAttrs()
 
-const _resolveComponent = attrs => h(VanField, attrs, attrs.slots)
+// formData表单值
+const fieldValue = defineModel()
+
+const _renderField = () => h(VanField, attrs, attrs.slots)
 </script>
 
 <style lang="scss" scoped></style>

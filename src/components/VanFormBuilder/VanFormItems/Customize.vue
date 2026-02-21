@@ -1,10 +1,8 @@
 <template>
-  <van-field v-if="inField" v-bind="$attrs">
-    <template #input>
-      <component :is="$attrs.component" v-bind="$attrs" />
-    </template>
-  </van-field>
-  <component v-else :is="$attrs.component" />
+  <template v-if="inField">
+    <component :is="_renderField()" :model-value="attrs.modelValue?.toString()" />
+  </template>
+  <component v-else :is="attrs.component" />
 </template>
 
 <script setup name="Customize">
@@ -14,6 +12,10 @@ const { inField } = defineProps({
     default: false
   }
 })
+
+const attrs = useAttrs()
+
+const _renderField = () => h(VanField, attrs, { ...attrs.slots, input: () => h(attrs.component, attrs) })
 </script>
 
 <style lang="scss" scoped></style>

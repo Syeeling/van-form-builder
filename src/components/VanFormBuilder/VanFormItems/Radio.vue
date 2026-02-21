@@ -1,26 +1,38 @@
 <template>
-  <van-field v-bind="$attrs" :model-value="fieldText">
-    <template #input v-if="!$attrs.readonly">
-      <van-radio-group v-model="fieldValue" v-bind="$attrs.props">
-        <template v-for="item in $attrs.props.options" :key="item.value">
-          <component :is="_resolveComponent(item)" :name="item.value" :class="item.shape || $attrs.props.shape" />
-        </template>
-      </van-radio-group>
-    </template>
-  </van-field>
+  <component :is="_renderField()" />
 </template>
 
 <script setup name="Radio">
 const attrs = useAttrs()
 
-const fieldValue = defineModel() // formData表单值
+// formData表单值
+const fieldValue = defineModel()
 
+// 选中项文本
 const fieldText = computed(() => {
   return attrs.props.options?.find(op => op.value === fieldValue.value)?.text || ''
 })
 
-const _resolveComponent = item =>
-  h(VanRadio, item, { ...item.slots, default: item.slots?.default || (() => item.text) })
+const _renderField = () =>
+  h(
+    VanField,
+    { ...attrs, modelValue: fieldText.value },
+    { ...attrs.slots, input: attrs.readonly ? undefined : () => _renderRadioGroup() }
+  )
+
+const _renderRadioGroup = () =>
+  h(
+    VanRadioGroup,
+    { ...attrs.props, modelValue: fieldValue.value, 'onUpdate:modelValue': val => (fieldValue.value = val) },
+    () => attrs.props.options.map(item => _renderRadio(item))
+  )
+
+const _renderRadio = item =>
+  h(
+    VanRadio,
+    { ...item, name: item.value, class: item.shape || attrs.props.shape },
+    { ...item.slots, default: item.slots?.default || (() => item.text || '') }
+  )
 </script>
 
 <style lang="scss" scoped>

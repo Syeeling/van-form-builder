@@ -1,18 +1,27 @@
 <template>
-  <van-field v-bind="$attrs">
-    <template #input>
-      <component v-model="fieldValue" :is="_resolveComponent($attrs.props)" />
-    </template>
-  </van-field>
+  <component :is="_renderField()" />
 </template>
 
 <script setup name="Uploader">
 const attrs = useAttrs()
 
-const fieldValue = defineModel() // formData表单值
+// formData表单值
+const fieldValue = defineModel()
 
-const _resolveComponent = props =>
-  h(VanUploader, { ...props, deletable: !attrs.readonly, showUpload: !attrs.readonly }, props.slots)
+const _renderField = () => h(VanField, attrs, { ...attrs.slots, input: () => _renderUploader() })
+
+const _renderUploader = () =>
+  h(
+    VanUploader,
+    {
+      ...attrs.props,
+      deletable: !attrs.readonly,
+      showUpload: !attrs.readonly,
+      modelValue: fieldValue.value,
+      'onUpdate:modelValue': val => (fieldValue.value = val)
+    },
+    attrs.props.slots
+  )
 </script>
 
 <style lang="scss" scoped></style>

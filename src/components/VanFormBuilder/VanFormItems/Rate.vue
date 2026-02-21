@@ -1,15 +1,26 @@
 <template>
-  <van-field v-bind="$attrs" :model-value="fieldValue">
-    <template #input v-if="!$attrs.readonly">
-      <component v-model="fieldValue" :is="_resolveComponent($attrs.props)" />
-    </template>
-  </van-field>
+  <component :is="_renderField()" />
 </template>
 
 <script setup name="Rate">
-const fieldValue = defineModel() // formData表单值
+const attrs = useAttrs()
 
-const _resolveComponent = props => h(VanRate, props, props.slots)
+// formData表单值
+const fieldValue = defineModel()
+
+const _renderField = () =>
+  h(
+    VanField,
+    { ...attrs, modelValue: fieldValue.value },
+    { ...attrs.slots, input: attrs.readonly ? undefined : () => _renderRate() }
+  )
+
+const _renderRate = () =>
+  h(
+    VanRate,
+    { ...attrs.props, modelValue: fieldValue.value, 'onUpdate:modelValue': val => (fieldValue.value = val) },
+    attrs.props.slots
+  )
 </script>
 
 <style lang="scss" scoped>

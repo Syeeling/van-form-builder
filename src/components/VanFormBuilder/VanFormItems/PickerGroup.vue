@@ -1,19 +1,12 @@
 <template>
-  <van-field
-    :model-value="fieldText"
-    :is-link="!$attrs.readonly"
-    v-bind="$attrs"
-    :clickable="!$attrs.readonly"
-    readonly
-    @click="!$attrs.readonly && (showPicker = true)"
-  />
+  <component :is="_renderField()" />
   <van-popup
     v-model:show="showPicker"
     v-bind="popupProps"
     :lazy-render="false"
     @open.once="pickerRefList.forEach(i => i.initPickerValue())"
   >
-    <component :is="_resolveComponent($attrs.props)" @cancel="_cancelSelect" @confirm="_confirmSelect" />
+    <component :is="_renderPickerGroup()" @cancel="_cancelSelect" @confirm="_confirmSelect" />
   </van-popup>
 </template>
 
@@ -47,26 +40,37 @@ const pickerTypes = {
   select: SPicker
 }
 
-const _resolveComponent = props =>
+const _renderField = () =>
+  h(
+    VanField,
+    {
+      isLink: !attrs.readonly,
+      ...attrs,
+      clickable: !attrs.readonly,
+      readonly: true,
+      modelValue: fieldText.value,
+      onClick: () => !attrs.readonly && (showPicker.value = true)
+    },
+    attrs.slots
+  )
+
+const _renderPickerGroup = () =>
   h(
     VanPickerGroup,
-    { nextStepText: '下一步', ...props },
-    {
-      ...props.slots,
-      default: () =>
-        attrs.pickerList.map((item, index) =>
-          h(pickerTypes[item.formType], {
-            ...{ props: {}, ...item },
-            key: index,
-            modelValue: fieldValue.value?.[index],
-            'onUpdate:modelValue': val => (fieldValue.value[index] = val),
-            preventDefaultGroupConfirmEvent: props.preventDefaultConfirmEvent,
-            ref: 'pickerList',
-            ref_for: true
-          })
-        )
-    }
+    { nextStepText: '下一步', ...attrs.props },
+    { ...attrs.props.slots, default: () => attrs.pickerList.map((item, index) => _renderPicker(item, index)) }
   )
+
+const _renderPicker = (item, index) =>
+  h(pickerTypes[item.formType], {
+    ...{ props: {}, ...item },
+    key: index,
+    modelValue: fieldValue.value?.[index],
+    'onUpdate:modelValue': val => (fieldValue.value[index] = val),
+    preventDefaultGroupConfirmEvent: attrs.props.preventDefaultConfirmEvent,
+    ref: 'pickerList',
+    ref_for: true
+  })
 
 const pickerRefList = useTemplateRef('pickerList')
 

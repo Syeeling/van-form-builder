@@ -91,7 +91,7 @@ const {
   // 顶部栏标题
   title: {
     type: String,
-    default: '请选择工单'
+    default: ''
   },
   // 确认按钮文字，设置为空字符串可以隐藏按钮
   confirmButtonText: {

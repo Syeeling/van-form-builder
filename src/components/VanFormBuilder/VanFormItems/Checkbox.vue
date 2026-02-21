@@ -1,24 +1,14 @@
 <template>
-  <van-field v-bind="$attrs" :model-value="fieldText">
-    <template #input v-if="!$attrs.readonly">
-      <van-checkbox-group v-model="fieldValue" v-bind="{ ...defaultProps, ...$attrs.props }">
-        <template v-for="item in $attrs.props.options" :key="item.value">
-          <component
-            :is="_resolveComponent(item)"
-            :name="item.value"
-            :class="item.shape || $attrs.props.shape || defaultProps.shape"
-          />
-        </template>
-      </van-checkbox-group>
-    </template>
-  </van-field>
+  <component :is="_renderField()" />
 </template>
 
 <script setup name="Checkbox">
 const attrs = useAttrs()
 
-const fieldValue = defineModel() // formData表单值
+// formData表单值
+const fieldValue = defineModel()
 
+// 选中项文本
 const fieldText = computed(() => {
   return attrs.props.options
     ?.filter(op => fieldValue.value?.includes(op.value))
@@ -31,8 +21,31 @@ const defaultProps = {
   shape: 'square'
 }
 
-const _resolveComponent = item =>
-  h(VanCheckbox, item, { ...item.slots, default: item.slots?.default || (() => item.text) })
+const _renderField = () =>
+  h(
+    VanField,
+    { ...attrs, modelValue: fieldText.value },
+    { ...attrs.slots, input: attrs.readonly ? undefined : () => _renderCheckboxGroup() }
+  )
+
+const _renderCheckboxGroup = () =>
+  h(
+    VanCheckboxGroup,
+    {
+      ...defaultProps,
+      ...attrs.props,
+      modelValue: fieldValue.value,
+      'onUpdate:modelValue': val => (fieldValue.value = val)
+    },
+    () => attrs.props.options.map(item => _renderCheckbox(item))
+  )
+
+const _renderCheckbox = item =>
+  h(
+    VanCheckbox,
+    { ...item, name: item.value, class: item.shape || attrs.props.shape || defaultProps.shape },
+    { ...item.slots, default: item.slots?.default || (() => item.text || '') }
+  )
 </script>
 
 <style lang="scss" scoped>

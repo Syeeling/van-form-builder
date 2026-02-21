@@ -1,14 +1,10 @@
 <template>
   <van-form ref="formRef" class="van-form-builder" v-bind="{ ...defaultFormProps, ...formProps, ...$attrs }">
-    <van-form-item
-      v-for="item in formItems"
-      :key="item.name"
-      :form-item="item"
-      :formData
-      :fieldProps
-      :popupProps
-      :class="{ readonly: item.readonly ?? fieldProps.readonly }"
-    />
+    <van-form-item v-for="item in formItems" :key="item.name" :form-item="item" :formData :fieldProps :popupProps>
+      <template v-for="(_, name) in $slots" #[name]="slotData">
+        <slot :name="name" v-bind="slotData || {}"></slot>
+      </template>
+    </van-form-item>
   </van-form>
 </template>
 
@@ -51,7 +47,7 @@ defineExpose({
 
 <style scoped lang="scss">
 .van-form-builder {
-  --readonly-opacity: 0.7;
+  --readonly-opacity: 0.5;
 }
 :deep() .van-field__label {
   flex: none;
